@@ -12,11 +12,11 @@
 # STEPS: 
 # -----------------------------------------------------------------
 # 1. Install dependencies (if not already installed)
-# 2. Extract text from HTML files, split it into different chunks of text in doc format
-# 3. Use OpenAIEmbeddings to create a vector store with Chroma
-# 4. Create a Retreiver Chain by embedding the entire conversation history to retreive relevant chunks of information
-# 5. Create a Conversation RAG Chain with system input and user input appended with the prompt
-# 6. Follow instructions on landing page and exceute tasks accordingly 
+# 2. Follow instructions on landing page to provide perfect prompts 
+# 3. Chatter AI then extracts text from HTML files, split it into different chunks of text in doc format
+# 4. Then uses OpenAIEmbeddings to create a vector store with Chroma
+# 5. After that creates a Retreiver Chain by embedding the entire conversation history to retreive relevant chunks of information
+# 6. Finally, creates a Conversation RAG Chain with system input and user input appended with the prompt 
 
 
 # IMPORT LIBRARIES
