@@ -1,6 +1,7 @@
 # ENVIRONMENT CONFIG:
 # -----------------------------------------------------------------
-# Setup conda environment and activate it by the following command:
+# install anaconda / miniconda
+# Setup conda environment and activate it by the following command from vscode terminal:
 # conda create --name chatter-ai python=3.10
 # conda activate chatter-ai
 
@@ -15,6 +16,7 @@
 # 3. Use OpenAIEmbeddings to create a vector store with Chroma
 # 4. Create a Retreiver Chain by embedding the entire conversation history to retreive relevant chunks of information
 # 5. Create a Conversation RAG Chain with system input and user input appended with the prompt
+# 6. Follow instructions on landing page and exceute tasks accordingly 
 
 
 # IMPORT LIBRARIES
@@ -23,16 +25,26 @@ from langchain_core.messages import AIMessage, HumanMessage
 from langchain_community.document_loaders import WebBaseLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
-from langchain_openai import OpenAIEmbeddings, ChatOpenAI 
+from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.chains.history_aware_retriever import create_history_aware_retriever
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 
-# Import mecessary files from .env while initial loading
+# Load OPEN_AI_API KEY from the environment file
 load_dotenv()
 
+# SETTINGS
+TEMPARATURE = 0.7 #default
+
+# CHECK OUTPUT FORMAT
+def check_output_format(OUTPUT_FORMAT):
+    if OUTPUT_FORMAT == "JSON":
+        return "Extract information from the document and consider the [SCHEMAS] as JSON elements and rewrite them in a JSON format efficiently ensuring completeness and accuracy for optimal utilization."
+    elif OUTPUT_FORMAT == 'Q/A':
+        return "Utilize the extracted information from the document to craft precise responses to predefined questions. Ensure responses remain succinct, containing no more than 100 words."
+        
 
 # perform vector embeddings on the received data
 def get_vector_store_from_url(url):
@@ -53,14 +65,14 @@ def get_vector_store_from_url(url):
 # gather context information about the conversation history and adds user prompt
 def get_context_retreiver_chain(vector_store):
     # init language model
-    llm = ChatOpenAI()
+    llm = ChatOpenAI(temperature=TEMPARATURE, model=MODEL)
     # allows retrieve relevant text from vector_store
     retriever = vector_store.as_retriever()
     # init prompt, populated with chat_history
     prompt = ChatPromptTemplate.from_messages([
         MessagesPlaceholder(variable_name="chat_history"),
         ("user","{input}"),
-        ("user", "Given the above conversation, generate a search query to lookup in order to get information relevant to the conversation.")
+        ("user", SEARCH_QUERY_PROMPT)
     ])
     
     retriever_chain = create_history_aware_retriever(llm, retriever, prompt)
@@ -70,7 +82,7 @@ def get_context_retreiver_chain(vector_store):
 # get information relevant to the conversation including user queries    
 def get_conversational_rag_chain(retriever_chain):
     # initialize llm
-    llm = ChatOpenAI()
+    llm = ChatOpenAI(temperature=TEMPARATURE, model=MODEL)
     # initialize prompt
     prompt = ChatPromptTemplate.from_messages([
         ("system","Answer the user's questions based on the below context:\n\n{context}"),
@@ -84,45 +96,71 @@ def get_conversational_rag_chain(retriever_chain):
     return create_retrieval_chain(retriever_chain, stuff_documents_chain)
 
     
-# everytime the user does a query, create a retriever chain, conversational_rag_chain and return a response including the chat_history and user input for final query
+# generate a retriever chain and conversational_rag_chain for each user query, then return a response with chat_history and user input.
 def get_response(user_input):
     # Fetch retriver chain context through session state vector_store
     retriever_chain = get_context_retreiver_chain(st.session_state.vector_store)
     
+    
     # Get the conversation rag chain
     conversational_rag_chain = get_conversational_rag_chain(retriever_chain)
     
+    
     response = conversational_rag_chain.invoke({
             "chat_history":st.session_state.chat_history,
-            "input": user_input
+            "input": user_input +". "+ SEARCH_QUERY_PROMPT
         })
+    
     return response['answer']
     
-    
-    
+# Reset session   
+def reset_page():
+    st.markdown("<script>location.reload(true);</script>", unsafe_allow_html=True)    
+
 
 # app configuration
-st.set_page_config(page_title="Chatter.AI", page_icon="🧠", layout= "centered")
+st.set_page_config(page_title="Chatter.AI", page_icon=":snowflake:", layout= "centered")
+st.image("src/brainy.png")
 st.title('Chatter.AI - Chat with Websites')
-
 
 
 # Sidebar
 with st.sidebar:
     st.header("Settings")
+    st.info("Before entering the website link, please choose your preferred settings from the list from I/O configuaration below.")
     website_url = st.text_input("Website URL")
-
+     # Create a button to clear the input field
+    if st.button("Reset Session"):
+        website_url = ""
+        reset_page()
+    
+    st.subheader("I/O Configuration")
+    OUTPUT_FORMAT = st.selectbox("Output format:",["JSON","Q/A"])
+    SEARCH_QUERY_PROMPT = check_output_format(OUTPUT_FORMAT)
+    
+    MODEL = st.selectbox("Model:",["gpt-3.5-turbo-0125","gpt-3.5-turbo-0163","gpt-3.5-turbo-1106"])
+    
+    TEMPARATURE = st.slider("Temparature:",0.0, 1.0)
+    
+    
+        
 # Main panel
 if website_url is None or website_url =="":
-    st.info("Follow the instructions properly: \n\n * Please enter a valid website URL. (ex: https://en.wikipedia.org/wiki/OpenAI)\n\n * After filling the website url section, press 'Enter' to connect with Chatter AI. \n\n * Wait until Chatter AI is available. It will greet you soon.\n\n * After that, you can ask Chatter AI your relevant questions based on that website, It will provide you with detailed information.\n\n ALL THE BEST! \n\n Powered by OpenAI and LangChain. \n\n Developed by Saidur Rahman Sujon. \n\n")
+    st.subheader("Instructions")
+    st.info("FOLLOW THE INSTRUCTIONS PROPERLY: \n\n * Please select all required I/O configuration. \n\n * Then enter a valid website URL (ex: https://en.wikipedia.org/wiki/OpenAI)\n\n * After filling the website url section, press 'Enter' to connect with Chatter AI. \n\n * Wait until Chatter AI is available. It will greet you soon.\n\n * After that, you can ask Chatter AI your relevant questions based on that website, It will provide you with detailed response.\n\n ALL THE BEST! \n\n Powered by OpenAI and LangChain. \n\n Developed by Saidur Rahman Sujon. \n\n")
     
 else:
     # Session state: Initialize chat_history at the beginning of each session
+    st.success("Session status: Connected to server")
     if "chat_history" not in st.session_state:
-        st.session_state.chat_history = [
-            # AI giving Greetings
-            AIMessage(content="Hello, I\'m Chatter AI. How can I help you?"),
-        ]
+        if OUTPUT_FORMAT == "Q/A":
+            st.session_state.chat_history = [
+                # AI giving Greetings
+                AIMessage(content="Hello, I\'m Chatter AI. How can I help you?"),
+            ]
+        elif OUTPUT_FORMAT == "JSON":
+            st.info("Enter the [SCHEMAS] in your prompt in the following format: \n\n SCHEMAS: product title, product price etc.")
+            st.session_state.chat_history = []    
         
     # Preventing re-embedding every single time making a query    
     if "vector_store" not in st.session_state:
@@ -135,12 +173,16 @@ else:
 
     if user_query is not None and user_query !="":
         response = get_response(user_query)
-        st.write(response)
         
-        # Append current queries to existing chat history
-        st.session_state.chat_history.append(HumanMessage(content=user_query))
-        st.session_state.chat_history.append(AIMessage(content=response))
-
+        
+        if OUTPUT_FORMAT == 'JSON':
+            st.json(response)
+            
+        elif OUTPUT_FORMAT == 'Q/A':
+            # Append current queries to existing chat history
+            st.session_state.chat_history.append(HumanMessage(content=user_query))
+            st.session_state.chat_history.append(AIMessage(content=response))
+        
         # Testing if retreiver chain is working properly
         #---------------------------------------------------
         #retrieved_documents = retriever_chain.invoke({
