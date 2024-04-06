@@ -7,6 +7,7 @@ Chatter.AI is a web application that allows you to chat with websites and extrac
 To run Chatter.AI, you need to have the following installed:
 * Anaconda / Miniconda
 * Streamlit
+* LangChain
 * Python 3.10
 
 You also need to create a `.env` file in the root directory of the project and add your OpenAI API key to it:
@@ -28,6 +29,13 @@ pip install -r requirements.txt
 ```bash
 streamlit run src\app.py
 ```
+or 
+
+```bash
+streamlit run src\chatter-ai.py
+```
+
+Both files are same. For streamlit deployment structure, `chatter-ai.py` and `requirement.txt` files has been created. 
 
 ## Usage
 

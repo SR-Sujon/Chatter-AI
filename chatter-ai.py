@@ -35,8 +35,6 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 # Load OPEN_AI_API KEY from the environment file
 load_dotenv()
 
-# SETTINGS
-TEMPARATURE = 0.7 #default
 
 # CHECK OUTPUT FORMAT
 def check_output_format(OUTPUT_FORMAT):
