@@ -1,6 +1,8 @@
 # Chatter.AI
 Chatter.AI is a web application that allows you to chat with websites and extract information from them. It uses the OpenAI API and LangChain library to process and understand the content of the website.
 
+![Chatter AI Demo](https://github.com/SR-Sujon/Chatter-AI/blob/main/public/Chatter-ai-Cover.jpg)
+
 ## Prequisites
 To run Chatter.AI, you need to have the following installed:
 * Anaconda / Miniconda
