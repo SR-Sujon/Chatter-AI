@@ -2,7 +2,7 @@ conda
 python<=3.10
 python-dotenv
 streamlit
-langchain
+langchain[all]
 langchain-openai
 openai
 beautifulsoup4
