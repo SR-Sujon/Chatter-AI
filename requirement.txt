@@ -1,8 +1,9 @@
+conda
+python<=3.10
+python-dotenv
 streamlit
 langchain
-openai
 langchain-openai
+openai
 beautifulsoup4
-python-dotenv
 chromadb
-conda
