@@ -7,7 +7,7 @@
 
 # DEPENDENCIES:
 # -----------------------------------------------------------------
-# pip install streamlit langchain langchain-openai beautifulsoup4 python-dotenv chromadb
+# pip install streamlit langchain langchain-openai beautifulsoup4 chromadb
 
 # STEPS: 
 # -----------------------------------------------------------------
@@ -27,7 +27,7 @@ from langchain_community.document_loaders import WebBaseLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
-from dotenv import load_dotenv
+
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.chains.history_aware_retriever import create_history_aware_retriever
 from langchain.chains.retrieval import create_retrieval_chain
@@ -35,7 +35,7 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 
 # Load OPEN_AI_API KEY from the environment file
 #load_dotenv()
-
+openai_api_key = ""
 
 # CHECK OUTPUT FORMAT
 def check_output_format(OUTPUT_FORMAT):
@@ -56,7 +56,7 @@ def get_vector_store_from_url(url):
     document_chunks = text_splitter.split_documents(document)
     
     # create a vectorstore from the retreived chunks
-    vector_store = Chroma.from_documents(document_chunks, OpenAIEmbeddings())
+    vector_store = Chroma.from_documents(document_chunks, OpenAIEmbeddings(api_key=openai_api_key))
     
     return vector_store
 
@@ -64,7 +64,7 @@ def get_vector_store_from_url(url):
 # gather context information about the conversation history and adds user prompt
 def get_context_retreiver_chain(vector_store):
     # init language model
-    llm = ChatOpenAI(temperature=TEMPARATURE, model=MODEL)
+    llm = ChatOpenAI(temperature=TEMPARATURE, model=MODEL, api_key=openai_api_key)
     # allows retrieve relevant text from vector_store
     retriever = vector_store.as_retriever()
     # init prompt, populated with chat_history
@@ -81,7 +81,7 @@ def get_context_retreiver_chain(vector_store):
 # get information relevant to the conversation including user queries    
 def get_conversational_rag_chain(retriever_chain):
     # initialize llm
-    llm = ChatOpenAI(temperature=TEMPARATURE, model=MODEL)
+    llm = ChatOpenAI(temperature=TEMPARATURE, model=MODEL, api_key=openai_api_key)
     # initialize prompt
     prompt = ChatPromptTemplate.from_messages([
         ("system","Answer the user's questions based on the below context:\n\n{context}"),
@@ -127,8 +127,8 @@ st.title('Chatter.AI - Chat with Websites')
 with st.sidebar:
     st.header("Settings")
     st.info("Before entering the website link, please Enter your OPEN AI API Key and choose your preferred settings from the list from I/O configuaration below.")
-    open_api_key = st.text_input("Enter OPEN AI API Key")
-    openai.api_key = open_api_key
+    openai_api_key = st.text_input("Enter OPEN AI API Key")
+    
     website_url = st.text_input("Website URL")
      # Create a button to clear the input field
     if st.button("Reset Session"):

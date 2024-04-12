@@ -3,47 +3,53 @@ Chatter.AI is a web application that allows you to chat with websites and extrac
 
 ![Chatter AI Demo](https://github.com/SR-Sujon/Chatter-AI/blob/main/public/Chatter-ai-Cover.png)
 
+## Deployed on Streamlit
+Link: https://chatter-ai.streamlit.app/
+
 ## Prerequisites
-To run Chatter.AI, you need to have the following installed:
+To run Chatter.AI on your local machine, you need to have the followings installed:
 * Anaconda / Miniconda
 * Streamlit
 * LangChain
 * Python 3.10
+* openai
+* langchain-openai
+* beautifulsoup4
+* chromadb
 
-You also need to create a `.env` file in the root directory of the project and add your OpenAI API key to it:
+In older version `.env` file was needed but now its not required anymore. Just directly paste your `OpenAI API key` in the interface Input.
 
-```bash
-OPEN_AI_API_KEY=your_openai_api_key
-```
 ## Installation
 1. Install the dependencies by running the following command in the terminal:
 
 ```bash
 conda create --name chatter-ai python=3.10
 conda activate chatter-ai
-pip install -r requirements.txt
+pip install streamlit langchain langchain-openai beautifulsoup4 chromadb
 ```
 
 2. Run the application by executing the following command in the terminal:
 
 ```bash
-streamlit run src\app.py
+streamlit run src/app.py
 ```
 or 
 
 ```bash
-streamlit run src\chatter-ai.py
+streamlit run chatter-ai.py
 ```
 
-Both files are same. For streamlit deployment structure, `chatter-ai.py` and `requirement.txt` files has been created. 
+Both files are same. For streamlit deployment requirements, `chatter-ai.py` and `requirements.txt` files has been created. 
 
 ## Usage
 
 1. Choose your preferred settings from the "I/O Configuration" section.
-2. Enter the URL of the website you want to chat with in the "Website URL" input field.
-3. Press "Enter" to connect with Chatter.AI.
-4. Wait until Chatter.AI is available. It will greet you soon.
-5. Ask Chatter.AI your relevant questions based on the website. It will provide you with detailed responses.
+2. Enter your OPENAI API in the Input Terminal.
+3. Enter the URL of the website you want to chat with in the "Website URL" input field.
+4. Press "Enter" to connect with Chatter.AI.
+5. Wait until Chatter.AI is available. It will greet you soon.
+6. Ask Chatter.AI your relevant questions based on the website. It will provide you with detailed responses.
+7. To reset sessions, click the "Reset session" button.
 
 ## Functions
 
@@ -60,6 +66,7 @@ Both files are same. For streamlit deployment structure, `chatter-ai.py` and `re
 * OpenAI
 * ChromaDB
 * Python
+
 
 ## License
 This project is licensed under the MIT License - see the LICENSE.md file for details.
