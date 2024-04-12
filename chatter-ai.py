@@ -20,6 +20,7 @@
 
 
 # IMPORT LIBRARIES
+import openai
 import streamlit as st
 from langchain_core.messages import AIMessage, HumanMessage
 from langchain_community.document_loaders import WebBaseLoader
@@ -33,7 +34,7 @@ from langchain.chains.retrieval import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 
 # Load OPEN_AI_API KEY from the environment file
-load_dotenv()
+#load_dotenv()
 
 
 # CHECK OUTPUT FORMAT
@@ -125,7 +126,9 @@ st.title('Chatter.AI - Chat with Websites')
 # Sidebar
 with st.sidebar:
     st.header("Settings")
-    st.info("Before entering the website link, please choose your preferred settings from the list from I/O configuaration below.")
+    st.info("Before entering the website link, please Enter your OPEN AI API Key and choose your preferred settings from the list from I/O configuaration below.")
+    open_api_key = st.text_input("Enter OPEN AI API Key")
+    openai.api_key = open_api_key
     website_url = st.text_input("Website URL")
      # Create a button to clear the input field
     if st.button("Reset Session"):
