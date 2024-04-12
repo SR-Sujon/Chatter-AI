@@ -2,8 +2,7 @@ conda
 python==3.10
 python-dotenv
 streamlit
-langchain==0.0.340
-langchain-core==0.0.11
+langchain
 openai
 langchain-openai
 beautifulsoup4
