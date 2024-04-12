@@ -1,5 +1,4 @@
-conda
-python==3.10
+python
 python-dotenv
 streamlit
 langchain
