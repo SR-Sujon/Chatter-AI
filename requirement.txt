@@ -3,7 +3,7 @@ python<=3.10
 python-dotenv
 streamlit
 langchain[all]
-langchain-openai
 openai
+langchain-openai
 beautifulsoup4
 chromadb
