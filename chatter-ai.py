@@ -119,22 +119,14 @@ def reset_page():
 
 # app configuration
 st.set_page_config(page_title="Chatter.AI", page_icon=":snowflake:", layout= "centered")
-st.image("src/brainy.png")
+st.image("public/brainy.png")
 st.title('Chatter.AI - Chat with Websites')
 
 
 # Sidebar
 with st.sidebar:
     st.header("Settings")
-    st.info("Before entering the website link, please Enter your OPEN AI API Key and choose your preferred settings from the list from I/O configuaration below.")
-    openai_api_key = st.text_input("Enter OPEN AI API Key")
-    
-    website_url = st.text_input("Website URL")
-     # Create a button to clear the input field
-    if st.button("Reset Session"):
-        website_url = ""
-        reset_page()
-    
+    st.info("Before entering the website link, At first choose your preferred settings from the list from I/O configuaration below. Then please enter your OPEN AI API Key and finally the website link.")
     st.subheader("I/O Configuration")
     OUTPUT_FORMAT = st.selectbox("Output format:",["JSON","Q/A"])
     SEARCH_QUERY_PROMPT = check_output_format(OUTPUT_FORMAT)
@@ -142,6 +134,15 @@ with st.sidebar:
     MODEL = st.selectbox("Model:",["gpt-3.5-turbo-0125","gpt-3.5-turbo-0163","gpt-3.5-turbo-1106"])
     
     TEMPARATURE = st.slider("Temparature:",0.0, 1.0)
+    
+    openai_api_key = st.text_input("Enter OPEN AI API Key")
+    website_url = st.text_input("Website URL")
+     # Create a button to clear the input field
+    if st.button("Reset Session"):
+        website_url = ""
+        reset_page()
+    
+
     
     
         
